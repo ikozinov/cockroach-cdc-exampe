@@ -1,0 +1,26 @@
+version: '2.1'
+
+services:  
+  cockroach:
+    image: cockroachdb/cockroach:v19.2.5 
+    ports:
+      - 26257:26257 
+      - 8480:8080
+    command: 
+      - "start"
+      - "--insecure"
+
+  cockroach-init:
+    image: cockroachdb/cockroach:v19.2.5 
+    command: 
+      - "sql"
+      - "--insecure"
+      - "--host"
+      - cockroach
+      - "--execute"
+      - |
+        SET CLUSTER SETTING kv.rangefeed.enabled TO TRUE;
+
+    depends_on:
+      - cockroach
+    restart: on-failure
